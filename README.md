@@ -1,5 +1,5 @@
 This repository contains the implementation of Federated Learning (FL) using a Vision Transformer (ViT-B16) model for skin lesion classification on the HAM10000 and ISIC2019 datasets. The project focuses on developing a privacy-preserving, scalable, and high-performance deep learning framework for dermatological image analysis.
-Key Features
+Key Features are:
 1. Vision Transformer (ViT-B16) model with a custom classification head optimized for skin lesion classification.
 2. Federated Learning (FL) setup with multiple clients and FedAvg aggregation.
 3. Experiments conducted on HAM10000 and ISIC2019 datasets for multi-class classification.
