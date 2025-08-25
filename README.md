@@ -15,3 +15,100 @@ Key Features are:
          2. ISIC2019: 25,000+ dermatoscopic images across 8 skin lesion classes.
 
 Both datasets are preprocessed with data augmentations and balanced splitting to improve generalization.
+
+Here is the flowchart for the methodology:
+
+                ┌──────────────────────────┐
+                │   START PROGRAM          │
+                └──────────────┬───────────┘
+                               │
+                               ▼
+        ┌─────────────────────────────────────────┐
+        │ 1. Initialize Global Model (ViT-B16)    │
+        │    • Load pretrained ViT-B16            │
+        │    • Modify classification head         │
+        │    • Send to DEVICE (GPU/CPU)           │
+        └─────────────────────────────────────────┘
+                               │
+                               ▼
+        ┌─────────────────────────────────────────┐
+        │ 2. Load Dataset & Split Among Clients   │
+        │    • ISIC2019 dataset                   │
+        │    • Divide balanced data among         │
+        │      NUM_CLIENTS                        │
+        │    • Create train/test DataLoaders      │
+        └─────────────────────────────────────────┘
+                               │
+                               ▼
+        ┌─────────────────────────────────────────┐
+        │ 3. FOR each ROUND in NUM_ROUNDS         │
+        └───────────────────┬─────────────────────┘
+                            │
+          ┌─────────────────▼──────────────────┐
+          │ 3.1 Initialize Client Models       │
+          │     • Copy pretrained ViT-B16      │
+          │     • Replace classification head  │
+          │     • Send to DEVICE               │
+          └─────────────────┬──────────────────┘
+                            │
+          ┌─────────────────▼──────────────────┐
+          │ 3.2 Create Optimizers & Losses     │
+          │     • Adam optimizer               │
+          │     • Weighted CrossEntropyLoss    │
+          └─────────────────┬──────────────────┘
+                            │
+          ┌─────────────────▼──────────────────┐
+          │ 3.3 FOR each CLIENT in NUM_CLIENTS │
+          └─────────────────┬──────────────────┘
+                            │
+          ┌─────────────────▼──────────────────┐
+          │  • Load global model weights       │
+          │  • Train local model:              │
+          │      - Forward pass                │
+          │      - Compute loss                │
+          │      - Backpropagation             │
+          │      - Update weights              │
+          │  • Save client’s final loss & acc  │
+          └─────────────────┬──────────────────┘
+                            │
+          ┌─────────────────▼──────────────────┐
+          │ 3.4 Aggregate Weights              │
+          │     • Use Federated Averaging      │
+          │     • Update global model          │
+          └─────────────────┬──────────────────┘
+                            │
+          ┌─────────────────▼──────────────────┐
+          │ 3.5 Evaluate Global Model          │
+          │     • Test on global test set      │
+          │     • Calculate:                   │
+          │         - Loss                     │
+          │         - Accuracy                 │
+          │         - F1-score                 │
+          │         - Confusion Matrix         │
+          │         - Sensitivity/Specificity  │
+          └─────────────────┬──────────────────┘
+                            │
+          ┌─────────────────▼──────────────────┐
+          │ 3.6 Save Progress                  │
+          │     • Save model weights           │
+          │     • Save performance history     │
+          └─────────────────┬──────────────────┘
+                            │
+                            ▼
+        ┌─────────────────────────────────────────┐
+        │ END ROUND                               │
+        └─────────────────────────────────────────┘
+                               │
+                               ▼
+        ┌─────────────────────────────────────────┐
+        │ 4. FINAL EVALUATION                     │
+        │    • Test global model on each client   │
+        │    • Generate client-specific           │
+        │      confusion matrices                 │
+        │    • Save results as JSON               │
+        └─────────────────────────────────────────┘
+                               │
+                               ▼
+                ┌──────────────────────────┐
+                │   END PROGRAM            │
+                └──────────────────────────┘
