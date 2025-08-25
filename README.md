@@ -11,9 +11,7 @@ Key Features
       3. Local epochs
       4. Learning rate and optimizer settings
       5. Datasets
-        a. HAM10000
-               — 10,000 dermatoscopic images across 7 skin lesion classes.
-         b. ISIC2019
-               — 25,000+ dermatoscopic images across 8 skin lesion classes.
+         1. HAM10000: 10,000 dermatoscopic images across 7 skin lesion classes.
+         2. ISIC2019: 25,000+ dermatoscopic images across 8 skin lesion classes.
 
 Both datasets are preprocessed with data augmentations and balanced splitting to improve generalization.
